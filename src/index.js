@@ -1,4 +1,7 @@
 import './css/styles.css';
+import debounce from "lodash.debounce";
+import { callFetch } from './fetchCountries';
+// var debounce = require('lodash.debounce');
 
 const DEBOUNCE_DELAY = 300;
 
@@ -6,23 +9,15 @@ const inputData = document.querySelector('#search-box');
 console.log(inputData);
 let inputName = "";
 
-inputData.addEventListener('input', countriesName)
+inputData.addEventListener('input', debounce(countriesName, DEBOUNCE_DELAY));
+
 
 function countriesName(evt) {
-    console.log(evt.currentTarget.value);
-    inputName = evt.currentTarget.value;
+    // console.log(evt.currentTarget.value);
+    inputName = evt.target.value.trim();
     callFetch();
+
 }
 
-function callFetch() {
-    fetch(`https://restcountries.com/v2/name/${inputName}?fields=name,flag`)
-    .then(responce => {
-        return responce.json();
-    })
-    .then(countries => {
-    console.log(countries);
-    })
-.catch (error => {
-    console.log(error);
-})
-}
+export { inputName };
+// let countriesOut = {};

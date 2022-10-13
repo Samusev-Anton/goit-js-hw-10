@@ -1,71 +1,76 @@
 import Notiflix from 'notiflix';
-import { inputName } from "./index";
+import { inputName } from './index';
 
-
-
-const insertBox = document.querySelector('.country-list')
+const insertBox = document.querySelector('.country-list');
 function callFetch() {
-    let markUp = '';
-    if (inputName === '') {
-        removeAllChildNodes(insertBox);
-        return
-    }
-    fetch(`https://restcountries.com/v2/name/${inputName}?fields=name,flag,capital,population,languages `)
-        
-
-        .then(responce => {
-            if (!responce.ok) {
-                throw new Error()
-            }
-        return responce.json();
+  if (inputName === '') {
+    removeAllChildNodes(insertBox);
+    return;
+  }
+  fetch(
+    `https://restcountries.com/v2/name/${inputName}?fields=name,flag,capital,population,languages `
+  )
+    .then(responce => {
+      if (!responce.ok) {
+        throw new Error();
+      }
+      return responce.json();
     })
-        .then(countries => {
-            console.log(countries);
-        if (countries.length === undefined) {
-        removeAllChildNodes(insertBox);
-        } else if (countries.length === 1) {
-                    removeAllChildNodes(insertBox);
-            markUp = countries.map(({ name, flag, capital, population, languages }) => {
-                // console.log(languages);
-                const languagesName = Object.values(languages);
-                let lang = ""
-                languagesName.forEach(language => {
-                    lang += language.name;
-                }).join(', ');
-                // console.log(languagesName);
+    .then(countries => {
+      console.log(countries);
+      createCountries(countries);
+    })
+    .catch(onFetcherror);
+}
+
+function createCountries(countries) {
+  let markUp = '';
+
+  if (countries.length === undefined) {
+    markUp = '';
+  } else if (countries.length === 1) {
+    markUp = countries
+      .map(({ name, flag, capital, population, languages }) => {
+        // console.log(languages);
+        const languagesName = Object.values(languages);
+        let lang = '';
+        languagesName.forEach(language => {
+          lang += language.name;
+        });
+        // console.log(languagesName);
         return `
-  <img class="gallery__image" src="${flag}" alt="${name}" />
+  <img class="gallery__image" src="${flag} " alt="${name}" width='300' hight='200'/>
   <p>${name} </p>
   <p>${capital} </p>
   <p>${population} </p>
-    <p>${lang} </p>` }).join('');
-        } else if (countries.length > 10) {
-            removeAllChildNodes(insertBox);
-            Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
-        } else {
-            removeAllChildNodes(insertBox);
-             markUp =  countries.map(({ name, flag }) => {
+    <p>${lang} </p>`;
+      })
+      .join('');
+  } else if (countries.length > 10) {
+    Notiflix.Notify.info(
+      'Too many matches found. Please enter a more specific name.'
+    );
+  } else {
+    markUp = countries
+      .map(({ name, flag }) => {
         return `
-  <img class="gallery__image" src="${flag}" alt="${name}" />
-  <p>${name} </p>`
-
-    }).join('');
-//    console.log(inputName);
- }
-        insertBox.insertAdjacentHTML('beforeend', markUp);
-    })
-        .catch(onFetcherror)
+  <img class="gallery__image" src="${flag}" alt="${name}" width='60' hight='40'/>
+  <p>${name} </p>`;
+      })
+      .join('');
+    //    console.log(inputName);
+  }
+  insertBox.innerHTML = markUp;
 }
 
 function onFetcherror(error) {
-        Notiflix.Notify.failure('Oops, there is no country with that name');
+  Notiflix.Notify.failure('Oops, there is no country with that name');
 }
 
-
 function removeAllChildNodes(insertBox) {
-    while (insertBox.firstChild) {
-        insertBox.removeChild(insertBox.firstChild);
-    }
+  while (insertBox.firstChild) {
+    insertBox.removeChild(insertBox.firstChild);
+  }
 }
 
 export { callFetch };

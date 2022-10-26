@@ -11,6 +11,7 @@ function callFetch() {
     `https://restcountries.com/v2/name/${inputName}?fields=name,flag,capital,population,languages `
   )
     .then(responce => {
+      console.log(responce);
       if (!responce.ok) {
         throw new Error();
       }
@@ -38,12 +39,13 @@ function createCountries(countries) {
           lang += language.name;
         });
         // console.log(languagesName);
-        return `
+        return `<li class='item'>
   <img class="gallery__image" src="${flag} " alt="${name}" width='300' hight='200'/>
-  <p>${name} </p>
-  <p>${capital} </p>
-  <p>${population} </p>
-    <p>${lang} </p>`;
+  <p>Name: ${name} </p>
+  <p>Capital: ${capital} </p>
+  <p>Population: ${population} </p>
+    <p>Langueges: ${lang} </p>
+    </li>`;
       })
       .join('');
   } else if (countries.length > 10) {
@@ -53,9 +55,10 @@ function createCountries(countries) {
   } else {
     markUp = countries
       .map(({ name, flag }) => {
-        return `
+        return `<li class='item'>
   <img class="gallery__image" src="${flag}" alt="${name}" width='60' hight='40'/>
-  <p>${name} </p>`;
+  <p>${name} </p>
+  </li>`;
       })
       .join('');
     //    console.log(inputName);
